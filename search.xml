@@ -401,11 +401,7 @@
       
         <tags>
             
-            <tag> c3p0 </tag>
-            
-            <tag> Druid </tag>
-            
-            <tag> JDBC </tag>
+            <tag> 数据库连接池 </tag>
             
         </tags>
       
