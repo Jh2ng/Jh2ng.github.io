@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>Win10+Nessus8.15.5破解</title>
+      <link href="/posts/57365/"/>
+      <url>/posts/57365/</url>
+      
+        <content type="html"><![CDATA[<blockquote><p>Nessus安装过程不做演示</p></blockquote><h3 id="前期准备"><a href="#前期准备" class="headerlink" title="前期准备"></a>前期准备</h3><p>获取<code>Challenge code</code></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nessuscli fetch --challenge</span><br></pre></td></tr></table></figure><p>获取插件包，地址如下：</p><blockquote><p><a href="https://zh-cn.tenable.com/products/nessus/nessus-essentials?tns_redirect=true">https://zh-cn.tenable.com/products/nessus/nessus-essentials?tns_redirect=true</a> （邮箱获取验证码）</p><p><a href="https://plugins.nessus.org/v2/offline.php">https://plugins.nessus.org/v2/offline.php</a> （输入Challenge code和邮箱验证码）</p></blockquote><h3 id="破解过程"><a href="#破解过程" class="headerlink" title="破解过程"></a>破解过程</h3><p>1、管理员打开cmd，停止Tenable服务</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net stop &quot;Tenable Nessus&quot;</span><br></pre></td></tr></table></figure><p>2、更改文件属性</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">attrib -s -r -h &quot;D:\Program Files\Tenable\Nessus\nessus\plugins\*.*&quot;</span><br><span class="line">attrib -s -r -h &quot;D:\Program Files\Tenable\Nessus\nessus\plugin_feed_info.inc&quot;</span><br></pre></td></tr></table></figure><p>根据安装路径进行更改，如果没有<code>plugin_feed_info.inc</code>文件就新建一个。</p><p><font color="red">注意<code>plugin_feed_info.inc</code>文件格式</font></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">PLUGIN_SET = &quot;202208031750&quot;;</span><br><span class="line">PLUGIN_FEED = &quot;ProfessionalFeed (Direct)&quot;;</span><br><span class="line">PLUGIN_FEED_TRANSPORT = &quot;Tenable Network Security Lightning&quot;;</span><br></pre></td></tr></table></figure><p>3、更新Nessus插件</p><p>切换到nessus目录下更新插件，插件包也放在此目录下，根据个人习惯，也可以指定插件包路径。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nessuscli.exe update all-2.0.tar.gz</span><br></pre></td></tr></table></figure><p><img src="https://image.jh2ing.com/image-20220809124551396.png" alt="image-20220809124551396"></p><p><font color="red">这里注意一下版本，<code>lugin_feed_info.inc</code>文件里的<code>PLUGIN_SET</code>值必须和插件版本一致</font></p><p> 把自己编写的<code>plugin_feed_info.inc</code>复制到<code>plugins</code>文件夹</p><p>4、复制<code>plugin_feed_info.inc</code>文件到文件夹</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">copy &quot;D:\Program Files\Tenable\Nessus\nessus\plugins\plugin_feed_info.inc&quot; &quot;D:\Program Files\Tenable\Nessus\nessus&quot;</span><br></pre></td></tr></table></figure><p><img src="https://image.jh2ing.com/image-20220809130552736.png" alt="image-20220809130552736"></p><blockquote><p>注意有没有<code>plugin_feed_info.inc</code>文件</p></blockquote><p>5、更改文件属性</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">attrib +s +r +h &quot;D:\Program Files\Tenable\Nessus\nessus\plugins\*.*&quot; </span><br><span class="line">attrib +s +r +h &quot;D:\Program Files\Tenable\Nessus\nessus\plugin_feed_info.inc&quot;</span><br><span class="line">attrib -s -r -h &quot;D:\Program Files\Tenable\Nessus\nessus\plugins\plugin_feed_info.inc&quot;</span><br></pre></td></tr></table></figure><p>6、启动Nessus服务</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net start &quot;Tenable Nessus&quot;</span><br></pre></td></tr></table></figure><p>访问Nessus：<a href="https://localhost:8834/#/">https://localhost:8834/#/</a></p><p>出现错误直接刷新，就会回到加载页面</p><p><img src="https://image.jh2ing.com/image-20220809132413936.png" alt="image-20220809132413936"></p><p>配置完成之后登录，无ip限制<img src="https://image.jh2ing.com/image-20220809132920948.png" alt="image-20220809132920948"></p><p>插件加载正常，破解完成</p><p><img src="https://image.jh2ing.com/image-20220809133023962.png" alt="image-20220809133023962"></p><h3 id="总结记录"><a href="#总结记录" class="headerlink" title="总结记录"></a>总结记录</h3><p>破解Nessus主要是通过修改<code>plugin_feed_info.inc</code>文件和两个目录下的文件属性。经过测试发现，在以上步骤不修改<code>plugin_feed_info.inc</code>文件，在最后通过自己编写的<code>plugin_feed_info.inc</code>去覆盖两个文件夹下的<code>plugin_feed_info.inc</code>文件，是可以破解成功的。如果在文件属性修改正确、整个步骤都没有错误的前提下，Nessus没有破解成功，可以去尝试覆盖两个文件夹下的<code>plugin_feed_info.inc</code>文件。</p><blockquote><p>注意：在修改文件时都关闭了<code>Tenable Nessus</code>服务</p></blockquote><p>更新插件，执行<code>nessuscli.exe update all-2.0.tar.gz</code>命令之后，通过版本编写<code>plugin_feed_info.inc</code>，然后尝试去覆盖两个文件夹下的<code>plugin_feed_info.inc</code>文件，看是否能够成功，如果不成功还是继续重复以上步骤。</p><p>此教程参考以下链接进行破解，个人自用，防止丢失。</p><p><em>参考链接</em></p><blockquote><p><a href="https://www.ddosi.org/nessus/">https://www.ddosi.org/nessus/</a></p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> Web安全 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 工具 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Apache APISIX 默认密钥漏洞（CVE-2020-13945）</title>
       <link href="/posts/38434/"/>
       <url>/posts/38434/</url>
