@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>burp抓取微信小程序</title>
+      <link href="/posts/22530/"/>
+      <url>/posts/22530/</url>
+      
+        <content type="html"><![CDATA[<p>前期准备：</p><ul><li>夜神模拟器</li><li>burp</li><li>JustTrustMe插件</li></ul><p>插件下载地址：</p><blockquote><p><a href="https://github.com/Fuzion24/JustTrustMe/releases">https://github.com/Fuzion24/JustTrustMe/releases</a></p></blockquote><h3 id="1、Xposed-JustTrustMe安装"><a href="#1、Xposed-JustTrustMe安装" class="headerlink" title="1、Xposed+JustTrustMe安装"></a>1、Xposed+JustTrustMe安装</h3><p>安装好夜神模拟器之后，启用Android5</p><p><img src="https://image.jh2ing.com/image-20220901182043477.png" alt="image-20220901182043477"></p><p>打开模拟器之后进入应用商店下载Xposed框架</p><p><img src="https://image.jh2ing.com/image-20220901182158431.png" alt="image-20220901182158431"></p><p>进入Xposed，选择推荐安装，然后重启模拟器，这里我已经安装完成。这里主要root授权选择永久授权</p><p><img src="https://image.jh2ing.com/image-20220901182326587.png" alt="image-20220901182326587"></p><p>然后把下载好的JustTrustMe拖入模拟器，模拟器会自动识别安装，安装完成之后会提示你未使用该模块，进入Xposed里勾选使用该模块，然后重启一下模拟器</p><p><img src="https://image.jh2ing.com/image-20220901182700053.png" alt="image-20220901182700053"></p><h3 id="2、burp抓包配置"><a href="#2、burp抓包配置" class="headerlink" title="2、burp抓包配置"></a>2、burp抓包配置</h3><p>打开burp配置监听端口，ip地址选择当前使用的网卡ip地址</p><p><img src="https://image.jh2ing.com/image-20220901183206779.png" alt="image-20220901183206779"></p><p>模拟器进入设置VLAN选项，长按即可出现修改网络的选项</p><p><img src="https://image.jh2ing.com/image-20220901183409943.png" alt="image-20220901183409943"></p><p>选择高级选择手动配置代理，然后填入burp配置的ip和端口</p><p><img src="https://image.jh2ing.com/image-20220901183518976.png" alt="image-20220901183518976"></p><p>给https协议安装证书，这里我在电脑上使用浏览器打开burp网址，下载CA证书，然后更改后缀名为<code>cer</code>，原来的为<code>der</code>。最终文件名：<code>cacert.cer</code></p><p>直接拖进模拟器</p><p><img src="https://image.jh2ing.com/image-20220901183722726.png" alt="image-20220901183722726"></p><p>模拟器会自动打开存放目录，记住这个目录位置</p><p><img src="https://image.jh2ing.com/image-20220901184200780.png" alt="image-20220901184200780"></p><p>导入证书，进入设置-&gt;安全-&gt;从SD卡安装证书</p><p><img src="https://image.jh2ing.com/image-20220901184316715.png" alt="image-20220901184316715"></p><p>选择刚才的Pictures目录，选择证书</p><p><img src="https://image.jh2ing.com/image-20220901184402911.png" alt="image-20220901184402911"></p><p>然后自己命名选择确定即可安装成功</p><p><img src="https://image.jh2ing.com/image-20220901184507353.png" alt="image-20220901184507353"></p><p>测试可以在burp得到微信小程序数据包</p><p><img src="https://image.jh2ing.com/image-20220901191217824.png" alt="image-20220901191217824"></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 漏洞复现 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Web安全 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>vulhub本地环境搭建</title>
       <link href="/posts/3352/"/>
       <url>/posts/3352/</url>
