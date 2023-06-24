@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>brup免java版本切换解决</title>
+      <link href="/posts/62204/"/>
+      <url>/posts/62204/</url>
+      
+        <content type="html"><![CDATA[<p>burp suite新版需要较高的jdk版本才能运行，而其他工具或开发环境一般默认使用的是jdk8，所以burp suite经常会遇到java版本切换的问题，网上也有许多的解决方案。比较常用的是使用jdk切换工具。<br>最近发现一种解决办法，原理如同<code>python2</code>和<code>python3</code>,配置多个环境变量，然后修改<code>bin</code>目录下的<code>java.exe</code>,例如把<code>java.exe</code>改为<code>java8.exe</code>，这样就可以使用<code>java8</code>来运行脚本。其他就使用默认的系统<code>java</code>的版本。但是这种方法运行<code>BurpLoaderKeygen.jar</code>运行时无法找到jdk，必须将高版本的jdk设置成默认的jdk才可以（也就是必须修改jdk8的java.exe）。然后使用jdk8就使用<code>java8 -jar</code>来运行jar包。由于许多东西都需要使用jdk8，所以这种方法就pass了。<br>又选择了写一个burp suite的启动脚本来免java版本切换；这里记录一下过程。<br>1、先去镜像站下载jdk，这里下载了jdk-18.0.2.1。<br>2、在<code>jdk-18.0.2.1\bin</code>下运行<code>java.exe -jar BurpLoaderKeygen.jar</code>。<br>3、然后激活burp。</p><blockquote><p>注意运行的是当前目录下的java.exe而不是系统环境变量中的java.exe，可以先version查看一下。</p></blockquote><p>4、激活成功后在<code>jdk-18.0.2.1\bin</code>中编写<code>burp.bat</code>，内容如下：</p><figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">@<span class="built_in">echo</span> off</span><br><span class="line"><span class="built_in">START</span> ./javaw --add-opens=java.desktop/javax.swing=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/jdk.internal.org.objectweb.asm=ALL-UNNAMED --add-opens=java.base/jdk.internal.org.objectweb.asm.<span class="built_in">tree</span>=ALL-UNNAMED --add-opens=java.base/jdk.internal.org.objectweb.asm.Opcodes=ALL-UNNAMED -javaagent: ../burp/BurpLoaderKeygen.jar -noverify -jar..\burp\burpsuite_pro_v2023.<span class="number">6</span>.jar</span><br></pre></td></tr></table></figure><blockquote><p>注意：这里路径做了处理，根据实际路径修改。这段参数复制自<code>BurpLoaderKeygen.jar</code>中的<code>Loader Command</code>。只需要后面的参数部分。使用javaw来运行，不会弹出命令行窗口。</p></blockquote><p>然后创建桌面快捷方式，为了好看也可以修改一下图标。<br>这里提供我下载好的图标，可以直接使用。<br><img src="https://image.jh2ing.com/burp_suite_alt_macos_bigsur_icon_190318.ico" alt="burp_suite_alt_macos_bigsur_icon_190318"></p><p>网上也有类似的免环境配置的brup提供下载，为了安全起见，还是自己配置一下吧。<br>效果图：<br><img src="https://image.jh2ing.com/20230624131622.png" alt="20230624131622"></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 工具 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Web安全 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>phpMyAdmin系列漏洞</title>
       <link href="/posts/38924/"/>
       <url>/posts/38924/</url>
