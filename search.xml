@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>ESXI 6.7升级7.0记录</title>
+      <link href="/posts/40439/"/>
+      <url>/posts/40439/</url>
+      
+        <content type="html"><![CDATA[<ol><li>下载升级包。<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://my.vmware.com/group/vmware/patch</span><br></pre></td></tr></table></figure></li><li>将下载好的升级包上传到ESXI主机的存储中并记录<code>datastore</code>的位置信息。</li><li>关闭全部虚拟机打开维护模式并开始ssh服务远程登录到esxi主机。</li><li>根据<code>datastore</code>位置信息进入到升级包所在目录。</li><li>查看升级包内的信息。<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">esxcli software sources profile list -d /vmfs/volumes/639dbd8f-b401dde3-4196-f8bc12422d9a/iso_image/VMware-ESXi-7.0U3m-21686933-depot.zip</span><br></pre></td></tr></table></figure></li><li>选择升级包执行升级命令。<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">esxcli software profile update -d /vmfs/volumes/639dbd8f-b401dde3-4196-f8bc12422d9a/iso_image/VMware-ESXi-7.0U3m-21686933-depot.zip -p ESXi-7.0U3m-21686933-standard</span><br></pre></td></tr></table></figure></li><li>升级完成之后重启ESXI主机即可。</li></ol>]]></content>
+      
+      
+      <categories>
+          
+          <category> Linux </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> ESXI </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>brup免java版本切换解决</title>
       <link href="/posts/62204/"/>
       <url>/posts/62204/</url>
