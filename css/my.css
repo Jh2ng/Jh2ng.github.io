@@ -35,20 +35,9 @@
 
 /* 字体 */
 @font-face {
-    font-family:'arzhu';
-    src:url('/css/myfont.ttf');
-    font-display:swap
+    font-family: 'myfont';
+    src: url('../../css/myfont.ttf');
 }
-h1#site-title {
-    font-family:arzhu!important
-}
-span#subtitle {
-    font-family:arzhu!important
-}
-a#site-name {
-    font-family:arzhu!important
-}
-
 
 
 /* 文章页背景 */
@@ -81,7 +70,7 @@ a#site-name {
     backdrop-filter: saturate(100%) blur(5px)
 }
 
-#footer::before {
+#footer {
     background: rgba(255,255,255,.15)
 }
 
