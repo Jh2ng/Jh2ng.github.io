@@ -1,3 +1,15 @@
+/* 字体 */
+@font-face {
+    /*字体名称，名字可以随便起，但是注意要一致，建议英文*/
+    font-family: 'myfont';
+    font-display: swap;
+    src: url('./css/myfont.ttf') format("truetype");
+  }
+
+
+
+
+
 /* 滚动条 */
 ::-webkit-scrollbar {
   width: 8px;
@@ -33,12 +45,6 @@
   background-color: #49b1f5;
 }
 
-/* 字体 */
-@font-face {
-    font-family: 'myfont';
-    src: url('../../css/myfont.ttf');
-}
-
 
 /* 文章页背景 */
 .layout>#post {
@@ -59,12 +65,6 @@
 #aside-content .card-widget, #recent-posts>.recent-post-item, .layout_page>div:first-child:not(.recent-posts), .layout_post>#page, .layout_post>#post, .read-mode .layout_post>#post{
     /* 以下代表透明度为0.4 */
     background: rgba(255,255,255,.4);
-}
-
-
-/* 页脚透明 */
-#footer {
-    background: transparent !important;
 }
 
 /* 渐变 */
@@ -126,5 +126,12 @@
   );
 }
 
-
+/* 页脚透明渐变 */
+#footer {
+  background: rgba(255, 255, 255, 0.15);
+  color: #000;
+  border-top-right-radius: 20px;
+  border-top-left-radius: 20px;
+  backdrop-filter: saturate(100%) blur(5px);
+}
 
