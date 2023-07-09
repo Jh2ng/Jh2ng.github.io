@@ -1,17 +1,22 @@
 /* 字体 */
-@font-face {
-    font-family: 'fangzhengkaiti';
+/*@font-face {*/
+/*    font-family: 'fangzhengkaiti';*/
     /* 字体名自定义即可 */
     /*src: url('https://cdn.jsdelivr.net/gh/Jh2ng/publicFile@v0.0.1/font/fangzhengkaiti.ttf');*/
-    src: url('/css/fangzhengkaiti.ttf') format("truetype");
+    /*src: url('/css/fangzhengkaiti.ttf') format("truetype");*/
     /* 字体文件路径 */
-    font-display: swap;
+/*    font-display: swap;*/
+/*}*/
+/* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
+@font-face {
+  font-family: "思源宋体 ExtraLight";font-weight: 250;src: url("//at.alicdn.com/wf/webfont/lE1QNn8klLQZ/IrrXTaHH5HUT.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/lE1QNn8klLQZ/LlIVsF15EDpL.woff") format("woff");
+  font-display: swap;
 }
-
-body,
-.gitcalendar {
-    font-family: myfont !important;
-}
+/*body,*/
+/*.gitcalendar {*/
+/*    font-family: myfont !important;*/
+/*}*/
 
 
 
