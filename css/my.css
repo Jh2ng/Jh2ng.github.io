@@ -3,7 +3,7 @@
     font-family: 'fangzhengkaiti';
     /* 字体名自定义即可 */
     /*src: url('https://cdn.jsdelivr.net/gh/Jh2ng/publicFile@v0.0.1/font/fangzhengkaiti.ttf');*/
-    src: url('/css/fangzhengkaiti.ttf');
+    src: url('/css/fangzhengkaiti.ttf') format("truetype");
     /* 字体文件路径 */
     font-display: swap;
 }
