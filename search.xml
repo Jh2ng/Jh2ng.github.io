@@ -20,7 +20,7 @@
       
         <tags>
             
-            <tag> ESXI </tag>
+            <tag> 虚拟化 </tag>
             
         </tags>
       
@@ -38,14 +38,14 @@
       
       <categories>
           
-          <category> Web安全 </category>
+          <category> 网络安全 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> 工具 </tag>
+            <tag> 环境搭建 </tag>
             
         </tags>
       
@@ -95,7 +95,7 @@
       
         <tags>
             
-            <tag> 归档 </tag>
+            <tag> 学习笔记 </tag>
             
         </tags>
       
@@ -120,7 +120,7 @@
       
         <tags>
             
-            <tag> 安全加固 </tag>
+            <tag> 操作指南 </tag>
             
         </tags>
       
@@ -195,7 +195,7 @@
       
         <tags>
             
-            <tag> 归档 </tag>
+            <tag> 操作指南 </tag>
             
         </tags>
       
@@ -220,7 +220,7 @@
       
         <tags>
             
-            <tag> 安全加固 </tag>
+            <tag> 操作指南 </tag>
             
         </tags>
       
@@ -245,7 +245,7 @@
       
         <tags>
             
-            <tag> 爬虫系列 </tag>
+            <tag> JS逆向 </tag>
             
         </tags>
       
@@ -270,9 +270,7 @@
       
         <tags>
             
-            <tag> upload-labs </tag>
-            
-            <tag> 文件上传 </tag>
+            <tag> Web安全 </tag>
             
         </tags>
       
@@ -340,14 +338,14 @@
       
       <categories>
           
-          <category> Web安全 </category>
+          <category> 网络安全 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> 工具 </tag>
+            <tag> 环境搭建 </tag>
             
         </tags>
       
@@ -372,7 +370,7 @@
       
         <tags>
             
-            <tag> vulhub </tag>
+            <tag> 环境搭建 </tag>
             
         </tags>
       
@@ -390,14 +388,14 @@
       
       <categories>
           
-          <category> Web安全 </category>
+          <category> 网络安全 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> 工具 </tag>
+            <tag> 环境搭建 </tag>
             
         </tags>
       
@@ -522,7 +520,7 @@
       
         <tags>
             
-            <tag> zabbix </tag>
+            <tag> 应用 </tag>
             
         </tags>
       
@@ -547,9 +545,9 @@
       
         <tags>
             
-            <tag> frp </tag>
-            
             <tag> 内网穿透 </tag>
+            
+            <tag> 应用 </tag>
             
         </tags>
       
@@ -574,7 +572,9 @@
       
         <tags>
             
-            <tag> Mybatis </tag>
+            <tag> Java Web </tag>
+            
+            <tag> 学习笔记 </tag>
             
         </tags>
       
@@ -599,7 +599,7 @@
       
         <tags>
             
-            <tag> nginx </tag>
+            <tag> 应用 </tag>
             
         </tags>
       
@@ -617,14 +617,14 @@
       
       <categories>
           
-          <category> Web安全 </category>
+          <category> 网络安全 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> XXE </tag>
+            <tag> Web安全 </tag>
             
         </tags>
       
@@ -642,14 +642,14 @@
       
       <categories>
           
-          <category> Web安全 </category>
+          <category> 网络安全 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> CSRF </tag>
+            <tag> Web安全 </tag>
             
         </tags>
       
@@ -699,9 +699,7 @@
       
         <tags>
             
-            <tag> phpstudy </tag>
-            
-            <tag> nginx </tag>
+            <tag> Web漏洞 </tag>
             
         </tags>
       
@@ -726,7 +724,7 @@
       
         <tags>
             
-            <tag> ECharts </tag>
+            <tag> JavaWeb </tag>
             
         </tags>
       
@@ -751,7 +749,7 @@
       
         <tags>
             
-            <tag> eve-ng </tag>
+            <tag> 模拟器 </tag>
             
         </tags>
       
@@ -776,7 +774,7 @@
       
         <tags>
             
-            <tag> xml </tag>
+            <tag> Java Web </tag>
             
         </tags>
       
@@ -801,7 +799,7 @@
       
         <tags>
             
-            <tag> 数据库连接池 </tag>
+            <tag> Java Web </tag>
             
         </tags>
       
@@ -826,7 +824,7 @@
       
         <tags>
             
-            <tag> Servlet </tag>
+            <tag> Java Web </tag>
             
         </tags>
       
