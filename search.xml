@@ -47,6 +47,8 @@
             
             <tag> 虚拟化 </tag>
             
+            <tag> 记录 </tag>
+            
         </tags>
       
     </entry>
@@ -145,7 +147,7 @@
       
         <tags>
             
-            <tag> 操作指南 </tag>
+            <tag> 记录 </tag>
             
         </tags>
       
@@ -195,7 +197,7 @@
       
         <tags>
             
-            <tag> 归档 </tag>
+            <tag> 学习笔记 </tag>
             
         </tags>
       
@@ -220,7 +222,7 @@
       
         <tags>
             
-            <tag> 操作指南 </tag>
+            <tag> 学习笔记 </tag>
             
         </tags>
       
@@ -245,7 +247,7 @@
       
         <tags>
             
-            <tag> 操作指南 </tag>
+            <tag> 记录 </tag>
             
         </tags>
       
@@ -545,7 +547,7 @@
       
         <tags>
             
-            <tag> 应用 </tag>
+            <tag> 记录 </tag>
             
         </tags>
       
@@ -572,7 +574,7 @@
             
             <tag> 内网穿透 </tag>
             
-            <tag> 应用 </tag>
+            <tag> 记录 </tag>
             
         </tags>
       
@@ -624,7 +626,7 @@
       
         <tags>
             
-            <tag> 应用 </tag>
+            <tag> 学习笔记 </tag>
             
         </tags>
       
@@ -724,7 +726,7 @@
       
         <tags>
             
-            <tag> Web漏洞 </tag>
+            <tag> vulhub </tag>
             
         </tags>
       
