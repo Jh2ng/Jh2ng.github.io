@@ -42,5 +42,5 @@ descr: the description of your blog
 name: Jh2ng
 link: https://www.jh2ng.cn/
 avatar: https://www.jh2ng.cn/img/touxiang.jpg
-descr: 忌心浮气躁，勿眼高手低
+descr: 林深时见鹿，海蓝时见鲸
 ```
